@@ -42,6 +42,7 @@ jobs:
   build-deploy:
     name: Build & Deploy to Root (sudoku-app/)
     needs: format
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
