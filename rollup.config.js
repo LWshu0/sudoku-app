@@ -6,7 +6,7 @@ import css from 'rollup-plugin-css-only';
 import livereload from 'rollup-plugin-livereload';
 import svelte from 'rollup-plugin-svelte';
 import sveltePreprocess from 'svelte-preprocess';
-
+import typescript from '@rollup/plugin-typescript';
 import postcssImport from 'postcss-import';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
@@ -52,14 +52,14 @@ export default {
       output: !production
         ? 'bundle.css'
         : (styles, styleNodes) => {
-            for (let filename of Object.keys(styleNodes)) {
-              if (filename.endsWith('App.css')) {
-                writeFileSync('./dist/critical.css', styleNodes[filename]);
-              }
+          for (let filename of Object.keys(styleNodes)) {
+            if (filename.endsWith('App.css')) {
+              writeFileSync('./dist/critical.css', styleNodes[filename]);
             }
+          }
 
-            writeFileSync('./dist/bundle.css', styles);
-          },
+          writeFileSync('./dist/bundle.css', styles);
+        },
     }),
 
     // If you have external dependencies installed from
@@ -72,7 +72,7 @@ export default {
       dedupe: ['svelte'],
     }),
     commonjs(),
-
+    typescript({ sourceMap: true }),
     // In dev mode, call `npm run start` once
     // the bundle has been generated
     !production && serve(),
@@ -80,9 +80,9 @@ export default {
     // Watch the `dist` directory and refresh the
     // browser on changes when not in production
     !production &&
-      livereload({
-        watch: ['dist/bundle.js', 'dist/bundle.css'],
-      }),
+    livereload({
+      watch: ['dist/bundle.js', 'dist/bundle.css'],
+    }),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
