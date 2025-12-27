@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { validateSencode } from '@sudoku/sencode';
+  import { sudokuParser } from '@sudoku/sudoku_parser';
   import game from '@sudoku/game';
   import { modal } from '@sudoku/stores/modal';
   import { gameWon } from '@sudoku/stores/game';
@@ -24,7 +24,7 @@
     }
 
     let sencode;
-    if (validateSencode(hash)) {
+    if (sudokuParser.validate(hash)) {
       sencode = hash;
     }
 
