@@ -1,10 +1,13 @@
 <script>
   import game from '@sudoku/game';
-  import { validateSencode } from '@sudoku/sencode';
+  import { validateSudokuCode } from '@sudoku/sudoku_parser';
   import { modal } from '@sudoku/stores/modal';
   import { slide, fade } from 'svelte/transition';
   import { DIFFICULTIES, DROPDOWN_DURATION, DIFFICULTY_CUSTOM } from '@sudoku/constants';
   import { difficulty } from '@sudoku/stores/difficulty';
+
+  // 新开一局时同时重置历史
+  import { initHistoryForNewGame } from '../../logic/History';
 
   let dropdownVisible = false;
 
@@ -19,6 +22,7 @@
       onHide: game.resume,
       callback: () => {
         game.startNew(difficultyValue);
+        initHistoryForNewGame();
       },
     });
   }
@@ -34,6 +38,7 @@
       onHide: game.resume,
       callback: () => {
         //game.startCreatorMode();
+        initHistoryForNewGame();
       },
     });
   }
@@ -50,8 +55,9 @@
       onHide: game.resume,
       callback: (value) => {
         game.startCustom(value);
+        initHistoryForNewGame();
       },
-      validate: validateSencode,
+      validate: validateSudokuCode,
     });
   }
 

@@ -1,8 +1,11 @@
 <script>
   import { difficulty as difficultyStore } from '@sudoku/stores/difficulty';
   import { startNew, startCustom } from '@sudoku/game';
-  import { validateSencode } from '@sudoku/sencode';
+  import { sudokuParser } from '@sudoku/sudoku_parser';
   import { DIFFICULTIES } from '@sudoku/constants';
+
+  // 新局开始时重置历史
+  import { initHistoryForNewGame } from '../../../logic/History';
 
   export let data = {};
   export let hideModal;
@@ -12,15 +15,18 @@
 
   $: enteredSencode = sencode.trim().length !== 0;
   $: buttonDisabled = enteredSencode
-    ? !validateSencode(sencode)
+    ? !sudokuParser.validate(sencode)
     : !DIFFICULTIES.hasOwnProperty(difficulty);
 
   function handleStart() {
-    if (validateSencode(sencode)) {
+    if (sudokuParser.validate(sencode)) {
       startCustom(sencode);
     } else {
       startNew(difficulty);
     }
+
+    // 新游戏开始后，清空并初始化历史结构
+    initHistoryForNewGame();
 
     hideModal();
   }

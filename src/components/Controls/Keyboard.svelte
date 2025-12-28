@@ -7,23 +7,11 @@
   // TODO: Improve keyboardDisabled
   import { keyboardDisabled } from '@sudoku/stores/keyboard';
 
-  function handleKeyButton(num) {
-    if (!$keyboardDisabled) {
-      if ($notes) {
-        if (num === 0) {
-          candidates.clear($cursor);
-        } else {
-          candidates.add($cursor, num);
-        }
-        userGrid.set($cursor, 0);
-      } else {
-        if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
-          candidates.clear($cursor);
-        }
+  // 统一通过 History 记录并应用输入，以支持树形历史 / Undo / Redo / Restart
+  import { handleNumberInput } from '../../logic/History';
 
-        userGrid.set($cursor, num);
-      }
-    }
+  function handleKeyButton(num) {
+    handleNumberInput(num);
   }
 
   function handleKey(e) {
