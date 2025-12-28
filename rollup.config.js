@@ -52,14 +52,14 @@ export default {
       output: !production
         ? 'bundle.css'
         : (styles, styleNodes) => {
-          for (let filename of Object.keys(styleNodes)) {
-            if (filename.endsWith('App.css')) {
-              writeFileSync('./dist/critical.css', styleNodes[filename]);
+            for (let filename of Object.keys(styleNodes)) {
+              if (filename.endsWith('App.css')) {
+                writeFileSync('./dist/critical.css', styleNodes[filename]);
+              }
             }
-          }
 
-          writeFileSync('./dist/bundle.css', styles);
-        },
+            writeFileSync('./dist/bundle.css', styles);
+          },
     }),
 
     // If you have external dependencies installed from
@@ -80,9 +80,9 @@ export default {
     // Watch the `dist` directory and refresh the
     // browser on changes when not in production
     !production &&
-    livereload({
-      watch: ['dist/bundle.js', 'dist/bundle.css'],
-    }),
+      livereload({
+        watch: ['dist/bundle.js', 'dist/bundle.css'],
+      }),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
