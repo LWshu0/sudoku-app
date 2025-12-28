@@ -9,12 +9,7 @@
   import { gamePaused } from '@sudoku/stores/game';
 
   // 历史控制：Undo / Redo / Restart
-  import {
-    undo,
-    redo,
-    restartFromLastBranch,
-    applyExternalMutation,
-  } from '../../../logic/History';
+  import { undo, redo, restartFromLastBranch, applyExternalMutation } from '../../../logic/History';
 
   $: hintsAvailable = $hints > 0;
 
