@@ -8,21 +8,31 @@
   import { keyboardDisabled } from '@sudoku/stores/keyboard';
   import { gamePaused } from '@sudoku/stores/game';
 
+  // 历史控制：Undo / Redo / Restart
+  import {
+    undo,
+    redo,
+    restartFromLastBranch,
+    applyExternalMutation,
+  } from '../../../logic/History';
+
   $: hintsAvailable = $hints > 0;
 
   function handleHint() {
     if (hintsAvailable) {
-      if ($candidates.hasOwnProperty($cursor.x + ',' + $cursor.y)) {
-        candidates.clear($cursor);
-      }
+      applyExternalMutation({ x: $cursor.x, y: $cursor.y }, (pos) => {
+        if ($candidates.hasOwnProperty(pos.x + ',' + pos.y)) {
+          candidates.clear(pos);
+        }
 
-      userGrid.applyHint($cursor);
+        userGrid.applyHint(pos);
+      });
     }
   }
 </script>
 
 <div class="action-buttons space-x-3">
-  <button class="btn btn-round" disabled={$gamePaused} title="Undo">
+  <button class="btn btn-round" disabled={$gamePaused} title="Undo" on:click={undo}>
     <svg
       class="icon-outline"
       xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +49,7 @@
     </svg>
   </button>
 
-  <button class="btn btn-round" disabled={$gamePaused} title="Redo">
+  <button class="btn btn-round" disabled={$gamePaused} title="Redo" on:click={redo}>
     <svg
       class="icon-outline"
       xmlns="http://www.w3.org/2000/svg"
@@ -52,6 +62,28 @@
         stroke-linejoin="round"
         stroke-width="2"
         d="M21 10h-10a8 8 90 00-8 8v2M21 10l-6 6m6-6l-6-6"
+      />
+    </svg>
+  </button>
+
+  <button
+    class="btn btn-round"
+    disabled={$gamePaused}
+    title="Restart from last branch"
+    on:click={restartFromLastBranch}
+  >
+    <svg
+      class="icon-outline"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 4v6h6M4 10a8 8 0 018-8 8 8 0 018 8v2m0 0l-3-3m3 3l3-3"
       />
     </svg>
   </button>

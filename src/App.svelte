@@ -15,6 +15,7 @@
   
   // 新增：引入我们写的解题器逻辑
   import { Solver } from './logic/Solver';
+  import { applyValueWithHistory } from './logic/History';
   import type { Hint } from './logic/types';
 
   // 实例化解题器
@@ -94,10 +95,8 @@
 			const col = index % 9;
 			const row = Math.floor(index / 9);
 
-			// === 核心修改：调用 userGrid 提供的 API ===
-			// grid.js 定义了 set: (pos, value) => { ... }
-			// pos 是 {x, y}
-			userGrid.set({ x: col, y: row }, value);
+      // 通过历史模块写入，保证 Undo/Redo 及分支逻辑生效
+      applyValueWithHistory({ x: col, y: row }, value);
 
 			// 移动光标并清除提示
 			cursor.set(col, row);

@@ -4,6 +4,9 @@
   import { validateSencode } from '@sudoku/sencode';
   import { DIFFICULTIES } from '@sudoku/constants';
 
+  // 新局开始时重置历史
+  import { initHistoryForNewGame } from '../../../logic/History';
+
   export let data = {};
   export let hideModal;
 
@@ -21,6 +24,9 @@
     } else {
       startNew(difficulty);
     }
+
+    // 新游戏开始后，清空并初始化历史结构
+    initHistoryForNewGame();
 
     hideModal();
   }

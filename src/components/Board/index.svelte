@@ -7,6 +7,9 @@
   import { candidates } from '@sudoku/stores/candidates';
   import Cell from './Cell.svelte';
 
+  // 从历史中读取“已尝试候选”信息，用于在候选列表中做视觉标记
+  import { triedCandidatesStore } from '../../logic/History';
+
   function isSelected(cursorStore, x, y) {
     return cursorStore.x === x && cursorStore.y === y;
   }
@@ -40,11 +43,13 @@
     >
       {#each $userGrid as row, y}
         {#each row as value, x}
+          {@const cellKey = x + ',' + y}
           <Cell
             {value}
             cellY={y + 1}
             cellX={x + 1}
-            candidates={$candidates[x + ',' + y]}
+            candidates={$candidates[cellKey]}
+            triedCandidates={$triedCandidatesStore[cellKey]}
             disabled={$gamePaused}
             selected={isSelected($cursor, x, y)}
             userNumber={$grid[y][x] === 0}

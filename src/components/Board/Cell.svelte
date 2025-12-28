@@ -8,6 +8,7 @@
   export let cellX;
   export let cellY;
   export let candidates;
+  export let triedCandidates;
 
   export let disabled;
   export let conflictingNumber;
@@ -40,7 +41,7 @@
     >
       <button class="cell-btn" on:click={cursor.set(cellX - 1, cellY - 1)}>
         {#if candidates}
-          <Candidates {candidates} />
+          <Candidates {candidates} tried={triedCandidates} />
         {:else}
           <span class="cell-text">{value || ''}</span>
         {/if}
