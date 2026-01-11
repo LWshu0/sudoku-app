@@ -10,6 +10,12 @@
   export let candidates;
   export let triedCandidates;
 
+  // Creator mode props
+  export let editable = false;
+  export let onEdit = null; // function({x,y,value})
+  export let isGiven = false;         // 新增
+  export let isModifiedGiven = false; // 新增
+
   export let disabled;
   export let conflictingNumber;
   export let userNumber;
@@ -21,6 +27,12 @@
   const borderRightBold = cellX !== SUDOKU_SIZE && cellX % 3 === 0;
   const borderBottom = cellY !== SUDOKU_SIZE && cellY % 3 !== 0;
   const borderBottomBold = cellY !== SUDOKU_SIZE && cellY % 3 === 0;
+
+  function handleClick() {
+    if (typeof cursor.set === 'function') {
+      cursor.set(cellX - 1, cellY - 1);
+    }
+  }
 </script>
 
 <div
@@ -33,13 +45,15 @@
   {#if !disabled}
     <div
       class="cell-inner"
-      class:user-number={userNumber}
+      class:is-given={isGiven}
+      class:is-modified-given={isModifiedGiven}
+      class:user-number={userNumber && !isGiven && !isModifiedGiven}
       class:selected
       class:same-area={sameArea}
       class:same-number={sameNumber}
       class:conflicting-number={conflictingNumber}
     >
-      <button class="cell-btn" on:click={cursor.set(cellX - 1, cellY - 1)}>
+      <button class="cell-btn" on:click={handleClick}>
         {#if candidates}
           <Candidates {candidates} tried={triedCandidates} />
         {:else}
@@ -115,6 +129,17 @@
 
   .same-number {
     @apply bg-primary-light;
+  }
+
+  /* 1. 绿色：初始数字且未动 */
+  .is-given {
+    @apply text-green-600 font-bold;
+  }
+
+  /* 2. 黄色：初始数字被修改或清除 */
+  /* 如果该格现在是空的，但它是原始数字位，你可以给个淡淡的底色或者让输入的数字变黄 */
+  .is-modified-given {
+    @apply text-yellow-500 font-bold;
   }
 
   .conflicting-number {

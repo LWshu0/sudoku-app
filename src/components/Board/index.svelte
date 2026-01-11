@@ -10,6 +10,14 @@
   // 从历史中读取“已尝试候选”信息，用于在候选列表中做视觉标记
   import { triedCandidatesStore } from '../../logic/History';
 
+  // Creator integration: optional props to make the Board editable and to accept an override grid
+  export let editable = false;
+  export let onCellEdit = null; // function({x, y, value})
+  export let overrideUserGrid = null; // optional 9x9 array to display instead of $userGrid
+  export let invalidCellsOverride = null; // optional array of 'x,y' strings to mark conflicts
+  export let disabled = undefined; // allow parent to force cells enabled/disabled (creator should pass disabled=false)
+  export let startingGrid = null;        // 新增：初始快照
+   
   function isSelected(cursorStore, x, y) {
     return cursorStore.x === x && cursorStore.y === y;
   }
@@ -26,9 +34,27 @@
   }
 
   function getValueAtCursor(gridStore, cursorStore) {
+    if (!gridStore) return null;
     if (cursorStore.x === null && cursorStore.y === null) return null;
 
     return gridStore[cursorStore.y][cursorStore.x];
+  }
+
+  // displayUserGrid prefers overrideUserGrid if provided (used by creator)
+  $: displayUserGrid = overrideUserGrid ? overrideUserGrid : $userGrid;
+
+  // 判定是否为“原始数字”
+  function checkIsGiven(x, y, currentVal) {
+    if (!startingGrid) return false;
+    const startVal = startingGrid[y][x];
+    return startVal !== 0 && currentVal === startVal;
+  }
+
+  // 判定是否为“被修改过的原始数字”
+  function checkIsModifiedGiven(x, y, currentVal) {
+    if (!startingGrid) return false;
+    const startVal = startingGrid[y][x];
+    return startVal !== 0 && currentVal !== startVal;
   }
 </script>
 
@@ -41,7 +67,7 @@
       class="bg-white shadow-2xl rounded-xl overflow-hidden w-full h-full max-w-xl grid"
       class:bg-gray-200={$gamePaused}
     >
-      {#each $userGrid as row, y}
+      {#each displayUserGrid as row, y}
         {#each row as value, x}
           {@const cellKey = x + ',' + y}
           <Cell
@@ -50,20 +76,29 @@
             cellX={x + 1}
             candidates={$candidates[cellKey]}
             triedCandidates={$triedCandidatesStore[cellKey]}
-            disabled={$gamePaused}
+            disabled={disabled !== undefined ? disabled : $gamePaused}
             selected={isSelected($cursor, x, y)}
-            userNumber={$grid[y][x] === 0}
+            userNumber={startingGrid ? (startingGrid[y][x] === 0) : ($grid[y][x] === 0)}
+
+            isGiven={checkIsGiven(x, y, value)}
+            isModifiedGiven={checkIsModifiedGiven(x, y, value)}
+
             sameArea={$settings.highlightCells &&
               !isSelected($cursor, x, y) &&
               isSameArea($cursor, x, y)}
             sameNumber={$settings.highlightSame &&
               value &&
               !isSelected($cursor, x, y) &&
-              getValueAtCursor($userGrid, $cursor) === value}
-            conflictingNumber={$settings.highlightConflicting &&
-              $grid[y][x] === 0 &&
-              $invalidCells.includes(x + ',' + y)}
-          />
+              getValueAtCursor(displayUserGrid, $cursor) === value}
+
+            conflictingNumber={
+              invalidCellsOverride 
+                ? invalidCellsOverride.includes(cellKey) // Creator 模式只看这个
+                : ($settings.highlightConflicting && $grid[y][x] === 0 && $invalidCells.includes(cellKey))
+            }
+            editable={editable}
+            onEdit={onCellEdit}
+          />        
         {/each}
       {/each}
     </div>

@@ -30,16 +30,11 @@
   function handleCreateOwn() {
     dropdownVisible = false;
     game.pause();
-
-    modal.show('confirm', {
-      title: 'Create Own',
-      text: 'Switch to the creator mode to create your own Sudoku puzzle?',
-      button: 'Continue',
-      onHide: game.resume,
-      callback: () => {
-        //game.startCreatorMode();
-        initHistoryForNewGame();
-      },
+    // Enter creator mode and open Creator modal
+    import('../../../src/creator_mode/creator.js').then(({ creator }) => {
+      creator.enter();
+      modal.show('creator', { onHide: game.resume });
+      initHistoryForNewGame();
     });
   }
 
