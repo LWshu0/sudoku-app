@@ -16,8 +16,8 @@
   export let overrideUserGrid = null; // optional 9x9 array to display instead of $userGrid
   export let invalidCellsOverride = null; // optional array of 'x,y' strings to mark conflicts
   export let disabled = undefined; // allow parent to force cells enabled/disabled (creator should pass disabled=false)
-  export let startingGrid = null;        // 新增：初始快照
-   
+  export let startingGrid = null; // 新增：初始快照
+
   function isSelected(cursorStore, x, y) {
     return cursorStore.x === x && cursorStore.y === y;
   }
@@ -78,11 +78,9 @@
             triedCandidates={overrideUserGrid ? null : $triedCandidatesStore[cellKey]}
             disabled={disabled !== undefined ? disabled : $gamePaused}
             selected={isSelected($cursor, x, y)}
-            userNumber={startingGrid ? (startingGrid[y][x] === 0) : ($grid[y][x] === 0)}
-
+            userNumber={startingGrid ? startingGrid[y][x] === 0 : $grid[y][x] === 0}
             isGiven={checkIsGiven(x, y, value)}
             isModifiedGiven={checkIsModifiedGiven(x, y, value)}
-
             sameArea={$settings.highlightCells &&
               !isSelected($cursor, x, y) &&
               isSameArea($cursor, x, y)}
@@ -90,15 +88,14 @@
               value &&
               !isSelected($cursor, x, y) &&
               getValueAtCursor(displayUserGrid, $cursor) === value}
-
-            conflictingNumber={
-              invalidCellsOverride 
-                ? invalidCellsOverride.includes(cellKey) // Creator 模式只看这个
-                : ($settings.highlightConflicting && $grid[y][x] === 0 && $invalidCells.includes(cellKey))
-            }
-            editable={editable}
+            conflictingNumber={invalidCellsOverride
+              ? invalidCellsOverride.includes(cellKey) // Creator 模式只看这个
+              : $settings.highlightConflicting &&
+                $grid[y][x] === 0 &&
+                $invalidCells.includes(cellKey)}
+            {editable}
             onEdit={onCellEdit}
-          />        
+          />
         {/each}
       {/each}
     </div>

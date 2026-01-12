@@ -13,7 +13,7 @@
   // Creator mode props
   export let editable = false;
   export let onEdit = null; // function({x,y,value})
-  export let isGiven = false;         // 新增
+  export let isGiven = false; // 新增
   export let isModifiedGiven = false; // 新增
 
   export let disabled;
