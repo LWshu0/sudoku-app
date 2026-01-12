@@ -74,8 +74,8 @@
             {value}
             cellY={y + 1}
             cellX={x + 1}
-            candidates={$candidates[cellKey]}
-            triedCandidates={$triedCandidatesStore[cellKey]}
+            candidates={overrideUserGrid ? null : $candidates[cellKey]}
+            triedCandidates={overrideUserGrid ? null : $triedCandidatesStore[cellKey]}
             disabled={disabled !== undefined ? disabled : $gamePaused}
             selected={isSelected($cursor, x, y)}
             userNumber={startingGrid ? (startingGrid[y][x] === 0) : ($grid[y][x] === 0)}
