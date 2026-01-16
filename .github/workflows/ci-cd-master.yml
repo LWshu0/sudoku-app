@@ -3,8 +3,12 @@ name: CI/CD - Master
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - '逆向分析/**'
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '逆向分析/**'
 
 permissions:
   contents: write
