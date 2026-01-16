@@ -3,8 +3,12 @@ name: CI/CD - Develop
 on:
   push:
     branches: [develop]
+    paths-ignore:
+      - '逆向分析/**'
   pull_request:
     branches: [develop]
+    paths-ignore:
+      - '逆向分析/**'
 
 permissions:
   contents: write
